@@ -1,5 +1,7 @@
+import AppRoutes from "./Routes/AppRoutes";
+
 function App() {
-  return <h1>Target System</h1>;
+  return <AppRoutes />;
 }
 
 export default App;
