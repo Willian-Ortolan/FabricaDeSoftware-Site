@@ -1,12 +1,13 @@
 import { Button, Tag } from "antd";
+import BannerHome from "../assets/Banner_Home.png";
+import { ButtonNossosServicos } from "./ConhecaServicosButton/ButtonNossosServicos";
 
 export default function HeroSection() {
   return (
     <section
       style={{
         minHeight: 520,
-        backgroundImage:
-          "linear-gradient(90deg, rgba(15,23,42,0.96) 0%, rgba(15,23,42,0.8) 38%, rgba(15,23,42,0.15) 70%), url('https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1600&q=80')",
+        backgroundImage: `linear-gradient(90deg, rgba(15,23,42,0.96) 0%, rgba(15,23,42,0.8) 38%, rgba(15,23,42,0.15) 70%), url(${BannerHome})`,
         backgroundSize: "cover",
         backgroundPosition: "center center",
         display: "flex",
@@ -65,18 +66,7 @@ export default function HeroSection() {
           >
             Solicitar Orçamento
           </Button>
-          <Button
-            size="large"
-            style={{
-              borderRadius: 999,
-              paddingInline: 26,
-              borderColor: "rgba(255,255,255,0.6)",
-              color: "white",
-              backgroundColor: "rgba(15,23,42,0.55)",
-            }}
-          >
-            Conheça os Serviços
-          </Button>
+          <ButtonNossosServicos />
         </div>
       </div>
     </section>

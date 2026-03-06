@@ -82,35 +82,35 @@ export default function Sidebar() {
             label: "Serviços",
           },
           {
-            key: "/tecnologia",
+            key: "/SobreNos",
             icon: <RadarChartOutlined />,
-            label: "Tecnologia",
+            label: "Sobre Nós",
           },
-          {
-            key: "/mapeamento",
-            icon: <EnvironmentOutlined />,
-            label: "Mapeamento",
-          },
-          {
-            key: "/pulverizacao",
-            icon: <ExperimentOutlined />,
-            label: "Pulverização",
-          },
+          // {
+          //   key: "/mapeamento",
+          //   icon: <EnvironmentOutlined />,
+          //   label: "Mapeamento",
+          // },
+          // {
+          //   key: "/pulverizacao",
+          //   icon: <ExperimentOutlined />,
+          //   label: "Pulverização",
+          // },
           {
             key: "/contratar",
             icon: <PhoneOutlined />,
             label: "Contratar",
           },
           {
-            key: "/cliente",
+            key: "/login",
             icon: <UserOutlined />,
-            label: "Área do Cliente",
+            label: "Login",
           },
-          {
-            key: "/admin",
-            icon: <SettingOutlined />,
-            label: "Admin",
-          },
+          // {
+          //   key: "/admin",
+          //   icon: <SettingOutlined />,
+          //   label: "Admin",
+          // },
         ]}
       />
 
