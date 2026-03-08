@@ -6,7 +6,7 @@ import Mapeamento from "../Pages/Mapeamento";
 import Pulverizacao from "../Pages/Pulverizacao";
 import Contratar from "../Pages/Contratar";
 import Login from "../Pages/Login";
-import Admin from "../Pages/Admin";
+import Admin from "../Pages/Admin/Admin";
 import NotFound from "../Pages/NotFound";
 import MainLayout from "../Layouts/MainLayout";
 
