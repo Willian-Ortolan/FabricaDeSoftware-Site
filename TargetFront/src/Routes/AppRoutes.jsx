@@ -7,6 +7,7 @@ import Pulverizacao from "../Pages/Pulverizacao";
 import Contratar from "../Pages/Contratar";
 import Login from "../Pages/Login";
 import Admin from "../Pages/Admin/Admin";
+import Cliente from "../Pages/Cliente/Cliente";
 import NotFound from "../Pages/NotFound";
 import MainLayout from "../Layouts/MainLayout";
 
@@ -23,6 +24,7 @@ export default function AppRoutes() {
           <Route path="/contratar" element={<Contratar />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/Cliente" element={<Cliente />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
