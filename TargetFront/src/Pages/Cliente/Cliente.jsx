@@ -1,4 +1,4 @@
-import { Row, Col, Typography } from "antd";
+import { Row, Col, Typography, Flex, Button } from "antd";
 import { useState } from "react";
 
 import CardsResumo from "./Components/CardsResumo";
@@ -8,53 +8,77 @@ import HistoricoOperacoes from "./Components/HistoricoOperacoes";
 import HistoricoOrcamentos from "./Components/Grid/HistoricoOrcamentos";
 import GridSolicitacoes from "./Components/Grid/GridSolicitacoes";
 
+import { useNavigate } from "react-router-dom";
+
 const { Title, Paragraph } = Typography;
 
 export default function ClienteDashboard() {
   const [mostrarSolicitacoes, setMostrarSolicitacoes] = useState(false);
 
+  const navigate = useNavigate();
+
+  function logout() {
+    localStorage.removeItem("token");
+
+    navigate("/");
+  }
+
   return (
-    <div style={{ padding: 24 }}>
-      <Title level={2}>Bem-vindo à sua Área de Cliente, João Silva!</Title>
+    (
+      <div style={{ padding: 24 }}>
+        {/* TOPO */}
+        <Flex justify="space-between" align="center">
+          <Title level={2}>Área do Cliente</Title>
 
-      <Paragraph>
-        Gerencie suas propriedades, acompanhe solicitações e visualize mapas e
-        relatórios.
-      </Paragraph>
+          <Button danger onClick={logout}>
+            Logout
+          </Button>
+        </Flex>
+      </div>
+    ),
+    (
+      <div style={{ padding: 24 }}>
+        <Title level={2}>Bem-vindo à sua Área de Cliente, João Silva!</Title>
 
-      {/* cards superiores */}
-      <CardsResumo onClickSolicitacoes={() => setMostrarSolicitacoes(true)} />
+        <Paragraph>
+          Gerencie suas propriedades, acompanhe solicitações e visualize mapas e
+          relatórios.
+        </Paragraph>
 
-      {/* card de solicitações */}
-      {mostrarSolicitacoes && (
+        {/* cards superiores */}
+        <CardsResumo onClickSolicitacoes={() => setMostrarSolicitacoes(true)} />
+
+        {/* card de solicitações */}
+        {mostrarSolicitacoes && (
+          <Row gutter={24} style={{ marginTop: 30 }}>
+            <Col span={24}>
+              <GridSolicitacoes />
+            </Col>
+          </Row>
+        )}
+
         <Row gutter={24} style={{ marginTop: 30 }}>
           <Col span={24}>
-            <GridSolicitacoes />
+            <MinhasPropriedades />
           </Col>
         </Row>
-      )}
 
-      <Row gutter={24} style={{ marginTop: 30 }}>
-        <Col span={24}>
-          <MinhasPropriedades />
-        </Col>
-      </Row>
+        <Row gutter={24} style={{ marginTop: 30 }}>
+          <Col span={24}>
+            <HistoricoOperacoes />
+          </Col>
+        </Row>
 
-      <Row gutter={24} style={{ marginTop: 30 }}>
-        <Col span={24}>
-          <HistoricoOperacoes />
-        </Col>
-      </Row>
+        <Row gutter={24} style={{ marginTop: 30 }}>
+          <Col span={16}>
+            <HistoricoOrcamentos />
+          </Col>
 
-      <Row gutter={24} style={{ marginTop: 30 }}>
-        <Col span={16}>
-          <HistoricoOrcamentos />
-        </Col>
-
-        <Col span={8}>
-          <ProximasOperacoes />
-        </Col>
-      </Row>
-    </div>
+          <Col span={8}>
+            <ProximasOperacoes />
+          </Col>
+        </Row>
+      </div>
+    )
   );
 }

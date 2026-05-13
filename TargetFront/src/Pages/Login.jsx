@@ -1,21 +1,47 @@
 import { Button, Card, Form, Input, Typography } from "antd";
 import PageShell from "../Components/PageShell";
 import { useNavigate } from "react-router-dom";
+import api from "./LoginServices.jsx";
 
 const { Paragraph, Title } = Typography;
 
 export default function Login() {
   const navigate = useNavigate();
 
-  function HandleLogin(values) {
-    const { email, senha } = values;
+  async function HandleLogin(values) {
+    try {
+      const response = await api.post("https://localhost:7289/api/auth/login", {
+        email: values.email,
+        senha: values.senha,
+      });
 
-    if (email === "cliente@target.com.br" && senha === "124578") {
-      navigate("/cliente"); // tela futura
-    } else if (email === "admin@target.com.br" && senha === "147258") {
-      navigate("/admin"); // tela admin
-    } else {
-      alert("E-mail ou senha inválidos");
+      // TOKEN
+      const token = response.data.token;
+
+      // SALVAR TOKEN
+      localStorage.setItem("token", token);
+
+      // DECODIFICAR JWT
+      const payload = JSON.parse(atob(token.split(".")[1]));
+
+      // ROLE
+      const role =
+        payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+      // REDIRECIONAR
+      if (role === "AdminSystem") {
+        navigate("/admin");
+      } else if (role === "Cliente") {
+        navigate("/cliente");
+      }
+    } catch (error) {
+      console.log(error);
+
+      console.log(error.response);
+
+      console.log(error.response?.data);
+
+      alert("Erro ao realizar login");
     }
   }
 

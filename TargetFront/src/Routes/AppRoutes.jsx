@@ -10,6 +10,7 @@ import Admin from "../Pages/Admin/Admin";
 import Cliente from "../Pages/Cliente/Cliente";
 import NotFound from "../Pages/NotFound";
 import MainLayout from "../Layouts/MainLayout";
+import PrivateRoute from "./PrivateRoute";
 
 export default function AppRoutes() {
   return (
@@ -24,7 +25,14 @@ export default function AppRoutes() {
           <Route path="/contratar" element={<Contratar />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="/Cliente" element={<Cliente />} />
+          <Route
+            path="/cliente"
+            element={
+              <PrivateRoute>
+                <Cliente />
+              </PrivateRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
