@@ -1,4 +1,5 @@
 import { Card, Row, Col, Typography, Button } from "antd";
+import { useNavigate } from "react-router-dom";
 import HeroSection from "../Components/HeroSection";
 import CardPadrao from "../Components/Cards/CardPadrao";
 import CardServico from "../Components/Cards/CardServico";
@@ -16,6 +17,7 @@ import { RiTreasureMapLine } from "react-icons/ri";
 const { Title, Paragraph } = Typography;
 
 export default function Home() {
+  const navigate = useNavigate();
   return (
     <>
       <HeroSection />
@@ -248,6 +250,7 @@ export default function Home() {
             <Button
               type="primary"
               size="large"
+              onClick={() => navigate("/contratar")}
               style={{
                 borderRadius: 999,
                 paddingInline: 30,
@@ -288,6 +291,7 @@ export default function Home() {
             <Button
               type="primary"
               size="large"
+              onClick={() => navigate("/contratar")}
               style={{
                 borderRadius: 999,
                 paddingInline: 30,

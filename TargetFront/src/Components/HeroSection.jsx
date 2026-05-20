@@ -1,8 +1,13 @@
 import { Button, Tag } from "antd";
+import { useNavigate } from "react-router-dom";
+
 import BannerHome from "../assets/Banner_Home.png";
 import { ButtonNossosServicos } from "./ConhecaServicosButton/ButtonNossosServicos";
 
 export default function HeroSection() {
+
+  const navigate = useNavigate();
+
   return (
     <section
       style={{
@@ -53,9 +58,11 @@ export default function HeroSection() {
         </p>
 
         <div style={{ marginTop: 28, display: "flex", gap: 12 }}>
+          
           <Button
             type="primary"
             size="large"
+            onClick={() => navigate("/contratar")}
             style={{
               background: "linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)",
               borderRadius: 999,
@@ -66,7 +73,9 @@ export default function HeroSection() {
           >
             Solicitar Orçamento
           </Button>
+
           <ButtonNossosServicos />
+
         </div>
       </div>
     </section>
