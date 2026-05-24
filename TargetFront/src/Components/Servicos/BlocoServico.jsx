@@ -12,6 +12,7 @@ function BlocoServico({
   textoBotao = "Solicitar Orçamento",
   icone,
   imagem,
+  rota,
 }) {
   return (
     <Card
@@ -105,6 +106,7 @@ function BlocoServico({
               fontWeight: 600,
               paddingInline: 24,
             }}
+             onClick={() => navigate("/contratar")}
           >
             {textoBotao}
           </Button>

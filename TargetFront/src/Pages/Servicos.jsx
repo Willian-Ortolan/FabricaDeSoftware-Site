@@ -70,6 +70,7 @@ const servicosData = [
     ],
     fechamento:
       "Os dados coletados são processados e entregues em formatos de fácil interpretação, auxiliando na tomada de decisões para manejo da lavoura.",
+    rota: "/contratar",
   },
 ];
 
@@ -81,20 +82,21 @@ export default function Servicos() {
       title="Serviços"
       subtitle="Pulverização, dispersão de sementes, aplicação de fertilizantes e mapeamento com drones."
        actions={
-         <Button
-           type="primary"
-           onClick={() => navigate("/contratar")}
-           style={{
-             borderRadius: 999,
-             background: "linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)",
-             border: "none",
-             fontWeight: 600,
-             paddingInline: 18,
-           }}
+        <></>
+          <Button
+            type="primary"
+            onClick={() => navigate("/contratar")}
+            style={{
+              borderRadius: 999,
+              background: "linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)",
+              border: "none",
+              fontWeight: 600,
+              paddingInline: 18,
+            }}
            
-         >
-           Solicitar Orçamento
-         </Button>
+          >
+            Solicitar Orçamento
+          </Button>
        }
     >
       {/* Cards visuais */}

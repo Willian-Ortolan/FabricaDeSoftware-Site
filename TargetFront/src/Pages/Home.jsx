@@ -264,46 +264,6 @@ export default function Home() {
             </Button>
           </div>
         </section>
-
-        <section
-          style={{
-            backgroundColor: "#0b1f4a",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: 820,
-              margin: "0 auto",
-              padding: "24px 40px 32px",
-              textAlign: "center",
-            }}
-          >
-            <Title
-              level={4}
-              style={{
-                marginTop: 0,
-                marginBottom: 16,
-                color: "white",
-              }}
-            >
-              Pronto para otimizar sua produção?
-            </Title>
-            <Button
-              type="primary"
-              size="large"
-              onClick={() => navigate("/contratar")}
-              style={{
-                borderRadius: 999,
-                paddingInline: 30,
-                backgroundColor: "#2563eb",
-                borderColor: "#2563eb",
-                fontWeight: 600,
-              }}
-            >
-              Fale com um Consultor
-            </Button>
-          </div>
-        </section>
       </main>
     </>
   );
