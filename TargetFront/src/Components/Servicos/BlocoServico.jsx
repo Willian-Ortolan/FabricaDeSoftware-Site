@@ -14,6 +14,9 @@ function BlocoServico({
   imagem,
   rota,
 }) {
+
+  const navigate = useNavigate();
+
   return (
     <Card
       style={{
@@ -45,7 +48,11 @@ function BlocoServico({
                 <img
                   src={icone}
                   alt=""
-                  style={{ width: 48, height: 48, objectFit: "contain" }}
+                  style={{
+                    width: 48,
+                    height: 48,
+                    objectFit: "contain",
+                  }}
                 />
               ) : (
                 <div
@@ -82,12 +89,27 @@ function BlocoServico({
             renderItem={(item) => (
               <List.Item style={{ border: "none", padding: "4px 0" }}>
                 <span
-                  style={{ display: "flex", alignItems: "flex-start", gap: 8 }}
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 8,
+                  }}
                 >
                   <CheckOutlined
-                    style={{ color: "#16a34a", marginTop: 5, flexShrink: 0 }}
+                    style={{
+                      color: "#16a34a",
+                      marginTop: 5,
+                      flexShrink: 0,
+                    }}
                   />
-                  <span style={{ color: "#64748b", fontSize: 14 }}>{item}</span>
+                  <span
+                    style={{
+                      color: "#64748b",
+                      fontSize: 14,
+                    }}
+                  >
+                    {item}
+                  </span>
                 </span>
               </List.Item>
             )}
@@ -99,14 +121,15 @@ function BlocoServico({
 
           <Button
             type="primary"
+            onClick={() => navigate("/contratar")}
             style={{
               borderRadius: 999,
-              background: "linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)",
+              background:
+                "linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)",
               border: "none",
               fontWeight: 600,
               paddingInline: 24,
             }}
-             onClick={() => navigate("/contratar")}
           >
             {textoBotao}
           </Button>

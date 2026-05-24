@@ -82,7 +82,7 @@ export default function Servicos() {
       title="Serviços"
       subtitle="Pulverização, dispersão de sementes, aplicação de fertilizantes e mapeamento com drones."
        actions={
-        <></>
+      
           <Button
             type="primary"
             onClick={() => navigate("/contratar")}
