@@ -1,9 +1,24 @@
-import { Button, Card, Col, Form, Input, Row, Typography } from "antd";
+import { Button, Card, Col, Form, Input, Row, Typography, message } from "antd";
 import PageShell from "../Components/PageShell";
+import { enviarContato } from "../services/contato.service";
 
 const { Paragraph, Title } = Typography;
 
 export default function Contratar() {
+  const [form] = Form.useForm();
+
+  async function handleSubmit(values) {
+    try {
+      await enviarContato(values);
+      message.success("Solicitação enviada com sucesso! Entraremos em contato em breve.");
+      form.resetFields();
+    } catch (error) {
+      const mensagem =
+        error.response?.data?.mensagem || "Erro ao enviar solicitação. Tente novamente.";
+      message.error(mensagem);
+    }
+  }
+
   return (
     <PageShell
       title="Contratar"
@@ -41,7 +56,7 @@ export default function Contratar() {
               Formulário de contato
             </Title>
 
-            <Form layout="vertical">
+            <Form form={form} layout="vertical" onFinish={handleSubmit}>
               <Row gutter={16}>
                 <Col xs={24} md={12}>
                   <Form.Item label="Nome" name="nome" rules={[{ required: true }]}>
@@ -60,7 +75,12 @@ export default function Contratar() {
               <Form.Item label="Mensagem" name="mensagem">
                 <Input.TextArea rows={5} placeholder="Descreva sua demanda..." />
               </Form.Item>
-              <Button type="primary" size="large" style={{ borderRadius: 12, fontWeight: 600 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                size="large"
+                style={{ borderRadius: 12, fontWeight: 600 }}
+              >
                 Enviar solicitação
               </Button>
             </Form>
@@ -70,4 +90,3 @@ export default function Contratar() {
     </PageShell>
   );
 }
-

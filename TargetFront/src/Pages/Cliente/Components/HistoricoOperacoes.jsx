@@ -1,143 +1,71 @@
-import { Card, Row, Col } from "antd";
+import { Card, Row, Col, Spin } from "antd";
 import { Area } from "@ant-design/plots";
+import { useEffect, useState } from "react";
+import { getHistoricoOperacoes } from "../../../services/cliente.service";
 
-const dataPulverizacao = [
-  { mes: "Jan", valor: 2 },
-  { mes: "Fev", valor: 5 },
-  { mes: "Mar", valor: 8 },
-  { mes: "Abr", valor: 6 },
-  { mes: "Mai", valor: 10 },
+const tipos = [
+  { key: "pulverizacao", titulo: "Pulverização", color: "#1677ff", stroke: "#1677ff" },
+  { key: "solidos", titulo: "Sólidos", color: "#52c41a", stroke: "#52c41a" },
+  { key: "mapeamento", titulo: "Mapeamentos", color: "#dd1111", stroke: "#dd1111" },
 ];
 
-const dataSolidos = [
-  { mes: "Jan", valor: 1 },
-  { mes: "Fev", valor: 2 },
-  { mes: "Mar", valor: 3 },
-  { mes: "Abr", valor: 4 },
-  { mes: "Mai", valor: 6 },
-];
+function buildConfig(data, color, stroke) {
+  return {
+    data,
+    xField: "mes",
+    yField: "valor",
+    smooth: true,
+    height: 300,
+    color,
+    style: {
+      fill: `linear-gradient(-90deg, ${color}0d 0%, ${color}73 100%)`,
+    },
+    line: { style: { lineWidth: 3, stroke } },
+    point: {
+      size: 4,
+      shape: "circle",
+      style: { fill: "#fff", stroke, lineWidth: 2 },
+    },
+  };
+}
 
-const dataMapeamento = [
-  { mes: "Jan", valor: 2 },
-  { mes: "Fev", valor: 4 },
-  { mes: "Mar", valor: 6 },
-  { mes: "Abr", valor: 5 },
-  { mes: "Mai", valor: 3 },
-];
 export default function HistoricoOperacoes() {
-  const configPulverizacao = {
-    data: dataPulverizacao,
-    xField: "mes",
-    yField: "valor",
-    smooth: true,
-    height: 300,
+  const [dados, setDados] = useState({});
+  const [loading, setLoading] = useState(true);
 
-    color: "#1677ff",
-
-    style: {
-      fill: "linear-gradient(-90deg, rgba(22,119,255,0.05) 0%, rgba(22,119,255,0.45) 100%)",
-    },
-
-    line: {
-      style: {
-        lineWidth: 3,
-      },
-    },
-
-    point: {
-      size: 4,
-      shape: "circle",
-      style: {
-        fill: "#fff",
-        stroke: "#1677ff",
-        lineWidth: 2,
-      },
-    },
-  };
-
-  const configSolidos = {
-    data: dataSolidos,
-    xField: "mes",
-    yField: "valor",
-    smooth: true,
-    height: 300,
-
-    color: "#52c41a",
-
-    style: {
-      fill: "linear-gradient(-90deg, rgba(82,196,26,0.05) 0%, rgba(82,196,26,0.45) 100%)",
-    },
-
-    line: {
-      style: {
-        lineWidth: 3,
-        stroke: "#52c41a",
-      },
-    },
-
-    point: {
-      size: 4,
-      shape: "circle",
-      style: {
-        fill: "#fff",
-        stroke: "#52c41a",
-        lineWidth: 2,
-      },
-    },
-  };
-
-  const configMapeamento = {
-    data: dataMapeamento,
-    xField: "mes",
-    yField: "valor",
-    smooth: true,
-    height: 300,
-
-    color: "#dd1111",
-
-    style: {
-      fill: "linear-gradient(-90deg, rgba(221, 20, 20, 0.05) 0%, rgba(221,20,20,0.45) 100%)",
-    },
-
-    line: {
-      style: {
-        lineWidth: 3,
-        stroke: "#dd1111",
-      },
-    },
-
-    point: {
-      size: 4,
-      shape: "circle",
-      style: {
-        fill: "#fff",
-        stroke: "#dd1111",
-        lineWidth: 2,
-      },
-    },
-  };
+  useEffect(() => {
+    async function carregar() {
+      try {
+        setLoading(true);
+        const resultados = await Promise.all(
+          tipos.map(async (t) => {
+            const data = await getHistoricoOperacoes(t.key);
+            return [t.key, data];
+          }),
+        );
+        setDados(Object.fromEntries(resultados));
+      } catch {
+        setDados({});
+      } finally {
+        setLoading(false);
+      }
+    }
+    carregar();
+  }, []);
 
   return (
-    <Card title="Histórico de Operações">
-      <Row gutter={24}>
-        <Col span={8}>
-          <Card size="small" title="Pulverização">
-            <Area {...configPulverizacao} />
-          </Card>
-        </Col>
-
-        <Col span={8}>
-          <Card size="small" title="Sólidos">
-            <Area {...configSolidos} />
-          </Card>
-        </Col>
-
-        <Col span={8}>
-          <Card size="small" title="Mapeamentos">
-            <Area {...configMapeamento} />
-          </Card>
-        </Col>
-      </Row>
-    </Card>
+    <Spin spinning={loading}>
+      <Card title="Histórico de Operações">
+        <Row gutter={24}>
+          {tipos.map((t) => (
+            <Col span={8} key={t.key}>
+              <Card size="small" title={t.titulo}>
+                <Area {...buildConfig(dados[t.key] || [], t.color, t.stroke)} />
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </Card>
+    </Spin>
   );
 }

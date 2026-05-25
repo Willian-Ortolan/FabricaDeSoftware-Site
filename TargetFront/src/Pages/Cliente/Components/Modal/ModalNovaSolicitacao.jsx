@@ -11,6 +11,8 @@ import {
   Button,
 } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
@@ -20,10 +22,36 @@ const precoServico = {
   solidos: 200,
 };
 
-export default function ModalSolicitacao({ open, onClose, onSave }) {
-  const [form] = Form.useForm();
+const servicoParaTipo = {
+  Mapeamento: "mapeamento",
+  Pulverização: "pulverizacao",
+  "Aplicação de Sólidos": "solidos",
+  Adubação: "solidos",
+};
 
+export default function ModalNovaSolicitacao({ open, onClose, onSave, initialData }) {
+  const [form] = Form.useForm();
   const servicos = Form.useWatch("servicos", form) || [];
+
+  useEffect(() => {
+    if (open && initialData) {
+      form.setFieldsValue({
+        fazenda: initialData.propriedade,
+        servicos: [
+          {
+            tipo: servicoParaTipo[initialData.servico] || "pulverizacao",
+            area: undefined,
+            data: initialData.data
+              ? dayjs(initialData.data, "DD/MM/YYYY")
+              : undefined,
+          },
+        ],
+      });
+    } else if (open) {
+      form.resetFields();
+      form.setFieldsValue({ servicos: [{}] });
+    }
+  }, [open, initialData, form]);
 
   const calcularValor = (tipo, area) => {
     if (!tipo || !area) return 0;
@@ -36,12 +64,13 @@ export default function ModalSolicitacao({ open, onClose, onSave }) {
 
   return (
     <Modal
-      title="Nova Solicitação"
+      title={initialData ? "Editar Solicitação" : "Nova Solicitação"}
       open={open}
       onCancel={onClose}
-      onOk={() => onSave(form.getFieldsValue())}
-      okText="Enviar Pré-Orçamento"
+      onOk={() => form.validateFields().then(onSave)}
+      okText={initialData ? "Salvar" : "Enviar Pré-Orçamento"}
       width={750}
+      destroyOnClose
     >
       <Form form={form} layout="vertical" initialValues={{ servicos: [{}] }}>
         <Row gutter={16}>
@@ -114,7 +143,7 @@ export default function ModalSolicitacao({ open, onClose, onSave }) {
                           name={[field.name, "area"]}
                           rules={[{ required: true }]}
                         >
-                          <InputNumber style={{ width: "100%" }} />
+                          <InputNumber style={{ width: "100%" }} min={1} />
                         </Form.Item>
                       </Col>
 

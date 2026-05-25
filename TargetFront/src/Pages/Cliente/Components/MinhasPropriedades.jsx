@@ -1,92 +1,113 @@
-import { Card, Button } from "antd";
+import { Card, Button, Spin, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalCadastroArea from "../Components/Modal/ModalCadastroArea";
+import PropriedadeCardCover from "../../../Components/Propriedade/PropriedadeCardCover";
+import { getPropriedades } from "../../../services/cliente.service";
 
-export default function MinhasPropriedades() {
-  const [open, setOpen] = useState(false);
+export default function MinhasPropriedades({ onUpdated }) {
+  const [modal, setModal] = useState({ open: false, mode: "create", propriedade: null });
+  const [propriedades, setPropriedades] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const propriedades = [
-    {
-      nome: "Fazenda Primavera",
-      cidade: "Rio Verde",
-      area: 1120,
-      img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
-    },
-    {
-      nome: "Sítio Boa Esperança",
-      cidade: "Uberlândia",
-      area: 303,
-      img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
-    },
-    {
-      nome: "Fazenda São Jorge",
-      cidade: "Rondonópolis",
-      area: 540,
-      img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
-    },
-    {
-      nome: "Fazenda São Jorge",
-      cidade: "Rondonópolis",
-      area: 540,
-      img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
-    },
-  ];
+  const carregar = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getPropriedades();
+      setPropriedades(data);
+    } catch (error) {
+      message.error(
+        error.response?.data?.mensagem || "Erro ao carregar propriedades.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    carregar();
+  }, [carregar]);
+
+  function abrirCriar() {
+    setModal({ open: true, mode: "create", propriedade: null });
+  }
+
+  function abrirDetalhes(prop) {
+    setModal({ open: true, mode: "view", propriedade: prop });
+  }
+
+  function fecharModal() {
+    setModal({ open: false, mode: "create", propriedade: null });
+  }
+
+  function handleSalvo() {
+    carregar();
+    onUpdated?.();
+  }
 
   return (
     <>
-      <Card title="Minhas Propriedades">
-        <div
-          style={{
-            display: "flex",
-            gap: 20,
-            overflowX: "auto",
-            paddingBottom: 10,
-          }}
-        >
-          {propriedades.map((prop, index) => (
+      <Spin spinning={loading}>
+        <Card title="Minhas Propriedades">
+          <div
+            style={{
+              display: "flex",
+              gap: 20,
+              overflowX: "auto",
+              paddingBottom: 10,
+            }}
+          >
+            {propriedades.map((prop) => (
+              <Card
+                key={prop.id}
+                hoverable
+                style={{
+                  minWidth: 260,
+                  maxWidth: 260,
+                  flexShrink: 0,
+                }}
+                cover={<PropriedadeCardCover img={prop.img} />}
+              >
+                <h3 style={{ marginTop: 0 }}>{prop.nome}</h3>
+                <p>{prop.cidade}</p>
+                <p>Área: {prop.area} ha</p>
+                {prop.cultura && <p>Cultura: {prop.cultura}</p>}
+                <Button type="primary" onClick={() => abrirDetalhes(prop)}>
+                  Ver detalhes
+                </Button>
+              </Card>
+            ))}
+
             <Card
-              key={index}
               hoverable
+              onClick={abrirCriar}
               style={{
                 minWidth: 260,
                 maxWidth: 260,
                 flexShrink: 0,
+                borderStyle: "dashed",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
               }}
-              cover={<img alt="fazenda" src={prop.img} />}
             >
-              <h3>{prop.nome}</h3>
-              <p>{prop.cidade}</p>
-              <p>Área: {prop.area} ha</p>
-
-              <Button type="primary">Ver detalhes</Button>
+              <div>
+                <PlusOutlined style={{ fontSize: 36 }} />
+                <p style={{ marginTop: 10 }}>Adicionar propriedade</p>
+              </div>
             </Card>
-          ))}
+          </div>
+        </Card>
+      </Spin>
 
-          {/* CARD ADICIONAR */}
-          <Card
-            hoverable
-            onClick={() => setOpen(true)}
-            style={{
-              minWidth: 260,
-              maxWidth: 260,
-              flexShrink: 0,
-              borderStyle: "dashed",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <div>
-              <PlusOutlined style={{ fontSize: 36 }} />
-              <p style={{ marginTop: 10 }}>Adicionar propriedade</p>
-            </div>
-          </Card>
-        </div>
-      </Card>
-
-      <ModalCadastroArea open={open} setOpen={setOpen} />
+      <ModalCadastroArea
+        open={modal.open}
+        onClose={fecharModal}
+        onSaved={handleSalvo}
+        mode={modal.mode}
+        propriedade={modal.propriedade}
+      />
     </>
   );
 }

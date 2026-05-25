@@ -1,13 +1,22 @@
-import { Tag, Button, Space } from "antd";
+import { Tag, Button, Space, Modal, InputNumber, DatePicker, message, Spin } from "antd";
 import {
   CheckOutlined,
   CloseOutlined,
   EditOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
+import { useCallback, useEffect, useState } from "react";
+import dayjs from "dayjs";
 import GridPadrao from "../../../../Components/GridPadrao/GridPadrao";
+import {
+  getOrcamentos,
+  aprovarOrcamento,
+  rejeitarOrcamento,
+  ajustarOrcamento,
+  reagendarOrcamento,
+} from "../../../../services/admin.service";
 
-const columns = [
+const columns = (handlers) => [
   {
     title: "Nº Orçamento",
     dataIndex: "IdOrcamento",
@@ -22,22 +31,17 @@ const columns = [
     title: "Situação",
     dataIndex: "Status",
     key: "Status",
-
     filters: [
       { text: "Pendente", value: "Pendente" },
       { text: "Aprovado", value: "Aprovado" },
       { text: "Rejeitado", value: "Rejeitado" },
     ],
-
     onFilter: (value, record) => record.Status === value,
-
     render: (status) => {
       let color = "default";
-
       if (status === "Pendente") color = "orange";
       if (status === "Aprovado") color = "green";
       if (status === "Rejeitado") color = "red";
-
       return <Tag color={color}>{status}</Tag>;
     },
   },
@@ -55,48 +59,40 @@ const columns = [
     title: "Data Solicitada",
     dataIndex: "DataSolicitada",
     key: "DataSolicitada",
-    render: (data) => new Date(data).toLocaleDateString("pt-BR"),
   },
   {
     title: "Ações",
     key: "acoes",
     render: (_, record) => (
       <Space wrap>
-        {/* Aprovar */}
         {record.Status === "Pendente" && (
           <Button
             type="primary"
             icon={<CheckOutlined />}
-            onClick={() => console.log("Aprovar", record)}
+            onClick={() => handlers.aprovar(record)}
           >
             Aprovar
           </Button>
         )}
-
-        {/* Rejeitar */}
         {record.Status === "Pendente" && (
           <Button
             danger
             icon={<CloseOutlined />}
-            onClick={() => console.log("Rejeitar", record)}
+            onClick={() => handlers.rejeitar(record)}
           >
             Rejeitar
           </Button>
         )}
-
-        {/* Ajustar orçamento */}
         <Button
           icon={<EditOutlined />}
-          onClick={() => console.log("Ajustar orçamento", record)}
+          onClick={() => handlers.ajustar(record)}
         >
           Ajustar
         </Button>
-
-        {/* Reagendar apenas se aprovado */}
         {record.Status === "Aprovado" && (
           <Button
             icon={<CalendarOutlined />}
-            onClick={() => console.log("Reagendar", record)}
+            onClick={() => handlers.reagendar(record)}
           >
             Reagendar
           </Button>
@@ -106,43 +102,136 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    IdOrcamento: 1,
-    Cliente: "João",
-    Status: "Pendente",
-    VlrEstimado: 2545,
-    DataSolicitada: "2026-03-05",
-  },
-  {
-    IdOrcamento: 2,
-    Cliente: "Maria",
-    Status: "Aprovado",
-    VlrEstimado: 1345,
-    DataSolicitada: "2026-03-06",
-  },
-  {
-    IdOrcamento: 3,
-    Cliente: "Pedro",
-    Status: "Pendente",
-    VlrEstimado: 3504,
-    DataSolicitada: "2026-03-07",
-  },
-  {
-    IdOrcamento: 4,
-    Cliente: "Ana",
-    Status: "Rejeitado",
-    VlrEstimado: 5745,
-    DataSolicitada: "2026-03-08",
-  },
-];
+export default function GridAprovacao({ Status, onUpdated }) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [ajusteModal, setAjusteModal] = useState(null);
+  const [reagendarModal, setReagendarModal] = useState(null);
+  const [novoValor, setNovoValor] = useState(null);
+  const [novaData, setNovaData] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
-export default function Aprovacoes({ Status }) {
-  const dataFiltrada = Status
-    ? data.filter((item) => item.Status === Status)
-    : data;
+  const carregar = useCallback(async () => {
+    try {
+      setLoading(true);
+      const result = await getOrcamentos(Status);
+      setData(result);
+    } catch (error) {
+      message.error(
+        error.response?.data?.mensagem || "Erro ao carregar orçamentos.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [Status]);
+
+  useEffect(() => {
+    carregar();
+  }, [carregar]);
+
+  async function executarAcao(acao, mensagemSucesso) {
+    try {
+      setActionLoading(true);
+      await acao();
+      message.success(mensagemSucesso);
+      await carregar();
+      onUpdated?.();
+    } catch (error) {
+      message.error(error.response?.data?.mensagem || "Erro ao executar ação.");
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  const handlers = {
+    aprovar: (record) =>
+      executarAcao(
+        () => aprovarOrcamento(record.IdOrcamento),
+        "Orçamento aprovado com sucesso.",
+      ),
+    rejeitar: (record) =>
+      executarAcao(
+        () => rejeitarOrcamento(record.IdOrcamento),
+        "Orçamento rejeitado.",
+      ),
+    ajustar: (record) => {
+      setNovoValor(record.VlrEstimado);
+      setAjusteModal(record);
+    },
+    reagendar: (record) => {
+      setNovaData(dayjs());
+      setReagendarModal(record);
+    },
+  };
+
+  async function confirmarAjuste() {
+    if (!ajusteModal || novoValor == null) return;
+    await executarAcao(
+      () => ajustarOrcamento(ajusteModal.IdOrcamento, novoValor),
+      "Valor ajustado com sucesso.",
+    );
+    setAjusteModal(null);
+  }
+
+  async function confirmarReagendamento() {
+    if (!reagendarModal || !novaData) return;
+    await executarAcao(
+      () =>
+        reagendarOrcamento(
+          reagendarModal.IdOrcamento,
+          novaData.toISOString(),
+        ),
+      "Orçamento reagendado com sucesso.",
+    );
+    setReagendarModal(null);
+  }
 
   return (
-    <GridPadrao columns={columns} data={dataFiltrada} rowKey="IdOrcamento" />
+    <>
+      <Spin spinning={loading}>
+        <GridPadrao
+          columns={columns(handlers)}
+          data={data}
+          rowKey="IdOrcamento"
+          loading={actionLoading}
+        />
+      </Spin>
+
+      <Modal
+        title="Ajustar valor estimado"
+        open={!!ajusteModal}
+        onCancel={() => setAjusteModal(null)}
+        onOk={confirmarAjuste}
+        confirmLoading={actionLoading}
+        okText="Salvar"
+      >
+        <InputNumber
+          style={{ width: "100%" }}
+          min={0}
+          value={novoValor}
+          onChange={setNovoValor}
+          formatter={(value) =>
+            `R$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+          }
+          parser={(value) => value.replace(/R\$\s?|(\.*)/g, "").replace(",", ".")}
+        />
+      </Modal>
+
+      <Modal
+        title="Reagendar operação"
+        open={!!reagendarModal}
+        onCancel={() => setReagendarModal(null)}
+        onOk={confirmarReagendamento}
+        confirmLoading={actionLoading}
+        okText="Reagendar"
+      >
+        <DatePicker
+          style={{ width: "100%" }}
+          value={novaData}
+          onChange={setNovaData}
+          format="DD/MM/YYYY"
+        />
+      </Modal>
+    </>
   );
 }

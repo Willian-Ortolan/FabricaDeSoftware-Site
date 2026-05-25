@@ -10,6 +10,7 @@ export default function ModalPadrao({
   confirmText = "Salvar",
   cancelText = "Cancelar",
   loading = false,
+  footer = null,
 }) {
   return (
     <Modal
@@ -29,20 +30,22 @@ export default function ModalPadrao({
         {/* Conteúdo */}
         <div>{children}</div>
 
-        {/* Footer padrão */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: 12,
-          }}
-        >
-          <Button onClick={onClose}>{cancelText}</Button>
-
-          <Button type="primary" onClick={onConfirm} loading={loading}>
-            {confirmText}
-          </Button>
-        </div>
+        {footer !== null ? (
+          footer
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 12,
+            }}
+          >
+            <Button onClick={onClose}>{cancelText}</Button>
+            <Button type="primary" onClick={onConfirm} loading={loading}>
+              {confirmText}
+            </Button>
+          </div>
+        )}
       </div>
     </Modal>
   );

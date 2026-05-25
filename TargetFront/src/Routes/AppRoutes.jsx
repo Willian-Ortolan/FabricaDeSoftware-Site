@@ -24,11 +24,18 @@ export default function AppRoutes() {
           <Route path="/pulverizacao" element={<Pulverizacao />} />
           <Route path="/contratar" element={<Contratar />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute role="AdminSystem">
+                <Admin />
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/cliente"
             element={
-              <PrivateRoute>
+              <PrivateRoute role="Cliente">
                 <Cliente />
               </PrivateRoute>
             }

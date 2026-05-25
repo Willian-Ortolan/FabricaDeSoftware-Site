@@ -1,12 +1,7 @@
 import { Row, Col, Card, Statistic } from "antd";
-import {
-  EnvironmentOutlined,
-  FileTextOutlined,
-  RocketOutlined,
-  PictureOutlined,
-} from "@ant-design/icons";
+import { EnvironmentOutlined, RocketOutlined } from "@ant-design/icons";
 
-export default function CardsResumo({ onClickSolicitacoes }) {
+export default function CardsResumo({ resumo, onClickSolicitacoes }) {
   return (
     <Row gutter={16}>
       <Col span={6}>
@@ -15,7 +10,10 @@ export default function CardsResumo({ onClickSolicitacoes }) {
           onClick={onClickSolicitacoes}
           style={{ cursor: "pointer" }}
         >
-          <Statistic title="Solicitações Pendentes" value={4} />
+          <Statistic
+            title="Solicitações Pendentes"
+            value={resumo?.solicitacoesPendentes ?? 0}
+          />
         </Card>
       </Col>
 
@@ -23,7 +21,7 @@ export default function CardsResumo({ onClickSolicitacoes }) {
         <Card>
           <Statistic
             title="Minhas Areas"
-            value={3}
+            value={resumo?.areas ?? 0}
             prefix={<EnvironmentOutlined />}
           />
         </Card>
@@ -31,19 +29,13 @@ export default function CardsResumo({ onClickSolicitacoes }) {
 
       <Col span={6}>
         <Card>
-          <Statistic title="Historico" value={15} prefix={<RocketOutlined />} />
+          <Statistic
+            title="Historico"
+            value={resumo?.historicoTotal ?? 0}
+            prefix={<RocketOutlined />}
+          />
         </Card>
       </Col>
-
-      {/*<Col span={6}>
-         <Card>
-          <Statistic
-            title="Mapas Disponíveis"
-            value={7}
-            prefix={<PictureOutlined />}
-          />
-        </Card> 
-      </Col>*/}
     </Row>
   );
 }

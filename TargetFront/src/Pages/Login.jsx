@@ -1,47 +1,49 @@
-import { Button, Card, Form, Input, Typography } from "antd";
+import { Button, Card, Form, Input, Typography, message } from "antd";
 import PageShell from "../Components/PageShell";
 import { useNavigate } from "react-router-dom";
-import api from "./LoginServices.jsx";
+import { login, getMe } from "../services/auth.service";
+import { getRoleFromToken } from "../utils/auth";
 
 const { Paragraph, Title } = Typography;
+
+function redirectByRole(role, navigate) {
+  if (role === "AdminSystem") {
+    navigate("/admin");
+    return true;
+  }
+  if (role === "Cliente") {
+    navigate("/cliente");
+    return true;
+  }
+  return false;
+}
 
 export default function Login() {
   const navigate = useNavigate();
 
-  async function HandleLogin(values) {
+  async function handleLogin(values) {
     try {
-      const response = await api.post("https://localhost:7289/api/auth/login", {
-        email: values.email,
-        senha: values.senha,
-      });
+      const data = await login(values.email, values.senha);
 
-      // TOKEN
-      const token = response.data.token;
+      let role = getRoleFromToken(data.token);
 
-      // SALVAR TOKEN
-      localStorage.setItem("token", token);
+      // Fallback: perfil vindo direto da API (mais confiável que decodificar JWT)
+      if (!role) {
+        const me = await getMe();
+        role = me.perfil ?? me.Perfil;
+      }
 
-      // DECODIFICAR JWT
-      const payload = JSON.parse(atob(token.split(".")[1]));
-
-      // ROLE
-      const role =
-        payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-
-      // REDIRECIONAR
-      if (role === "AdminSystem") {
-        navigate("/admin");
-      } else if (role === "Cliente") {
-        navigate("/cliente");
+      if (!redirectByRole(role, navigate)) {
+        message.error(
+          `Perfil de usuário não reconhecido${role ? `: "${role}"` : ""}.`,
+        );
       }
     } catch (error) {
-      console.log(error);
-
-      console.log(error.response);
-
-      console.log(error.response?.data);
-
-      alert("Erro ao realizar login");
+      const mensagem =
+        error.response?.data?.mensagem ||
+        error.message ||
+        "Erro ao realizar login. Verifique suas credenciais.";
+      message.error(mensagem);
     }
   }
 
@@ -65,7 +67,7 @@ export default function Login() {
             Use seu e-mail e senha para acessar.
           </Paragraph>
 
-          <Form layout="vertical" onFinish={HandleLogin}>
+          <Form layout="vertical" onFinish={handleLogin}>
             <Form.Item
               label="E-mail"
               name="email"
