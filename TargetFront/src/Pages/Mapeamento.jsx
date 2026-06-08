@@ -1,5 +1,6 @@
-import { Button, Card, Col, Descriptions, Form, Input, Row, Select, Typography } from "antd";
+import { Button, Card, Col, Descriptions, Form, Input, InputNumber, Row, Select, Typography } from "antd";
 import PageShell from "../Components/PageShell";
+import { propsInputArea, regraAreaPositiva } from "../utils/validacao";
 
 const { Paragraph, Title } = Typography;
 
@@ -76,8 +77,8 @@ export default function Mapeamento() {
                   ]}
                 />
               </Form.Item>
-              <Form.Item label="Área (ha)" name="area">
-                <Input placeholder="Ex.: 120" />
+              <Form.Item label="Área (ha)" name="area" rules={[regraAreaPositiva("Área")]}>
+                <InputNumber style={{ width: "100%" }} placeholder="Ex.: 120" {...propsInputArea} />
               </Form.Item>
               <Form.Item label="Cidade/UF" name="local">
                 <Input placeholder="Ex.: Uberlândia/MG" />

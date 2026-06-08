@@ -1,66 +1,33 @@
-import {
-  Modal,
-  Form,
-  Input,
-  Select,
-  InputNumber,
-  DatePicker,
-  Row,
-  Col,
-  Typography,
-  Button,
-} from "antd";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { Modal, Form } from "antd";
 import { useEffect } from "react";
 import dayjs from "dayjs";
-
-const { Text } = Typography;
-
-const precoServico = {
-  mapeamento: 100,
-  pulverizacao: 150,
-  solidos: 200,
-};
-
-const servicoParaTipo = {
-  Mapeamento: "mapeamento",
-  Pulverização: "pulverizacao",
-  "Aplicação de Sólidos": "solidos",
-  Adubação: "solidos",
-};
+import FormularioSolicitacaoOrcamento from "../../../../Components/FormularioSolicitacaoOrcamento";
 
 export default function ModalNovaSolicitacao({ open, onClose, onSave, initialData }) {
   const [form] = Form.useForm();
-  const servicos = Form.useWatch("servicos", form) || [];
 
   useEffect(() => {
     if (open && initialData) {
+      const servicos = (initialData.servicos || []).map((s) => ({
+        tipo: s.tipo ?? s.Tipo,
+        area: s.area ?? s.Area,
+        data: (s.dataExecucao ?? s.DataExecucao ?? s.data ?? s.Data)
+          ? dayjs(s.dataExecucao ?? s.DataExecucao ?? s.data ?? s.Data, "DD/MM/YYYY")
+          : undefined,
+      }));
+
       form.setFieldsValue({
-        fazenda: initialData.propriedade,
-        servicos: [
-          {
-            tipo: servicoParaTipo[initialData.servico] || "pulverizacao",
-            area: undefined,
-            data: initialData.data
-              ? dayjs(initialData.data, "DD/MM/YYYY")
-              : undefined,
-          },
-        ],
+        fazenda: initialData.propriedade ?? initialData.Propriedade,
+        nome: initialData.nomeContato ?? initialData.NomeContato,
+        telefone: initialData.telefone ?? initialData.Telefone,
+        cidade: initialData.cidade ?? initialData.Cidade,
+        servicos: servicos.length > 0 ? servicos : [{}],
       });
     } else if (open) {
       form.resetFields();
       form.setFieldsValue({ servicos: [{}] });
     }
   }, [open, initialData, form]);
-
-  const calcularValor = (tipo, area) => {
-    if (!tipo || !area) return 0;
-    return precoServico[tipo] * area;
-  };
-
-  const totalGeral = servicos.reduce((acc, s) => {
-    return acc + calcularValor(s?.tipo, s?.area);
-  }, 0);
 
   return (
     <Modal
@@ -73,129 +40,7 @@ export default function ModalNovaSolicitacao({ open, onClose, onSave, initialDat
       destroyOnClose
     >
       <Form form={form} layout="vertical" initialValues={{ servicos: [{}] }}>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label="Fazenda"
-              name="fazenda"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-
-          <Col span={12}>
-            <Form.Item
-              label="Nome para contato"
-              name="nome"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Form.Item label="Telefone" name="telefone">
-          <Input />
-        </Form.Item>
-
-        <Form.List name="servicos">
-          {(fields, { add }) => (
-            <>
-              {fields.map((field, index) => {
-                const servico = servicos[index] || {};
-                const valor = calcularValor(servico.tipo, servico.area);
-                const completo = servico.tipo && servico.area && servico.data;
-
-                return (
-                  <div
-                    key={field.key}
-                    style={{
-                      border: "1px solid #eee",
-                      padding: 16,
-                      borderRadius: 10,
-                      marginBottom: 16,
-                    }}
-                  >
-                    <Row gutter={16}>
-                      <Col span={8}>
-                        <Form.Item
-                          label="Serviço"
-                          name={[field.name, "tipo"]}
-                          rules={[{ required: true }]}
-                        >
-                          <Select
-                            options={[
-                              { value: "mapeamento", label: "Mapeamento" },
-                              { value: "pulverizacao", label: "Pulverização" },
-                              {
-                                value: "solidos",
-                                label: "Aplicação de Sólidos",
-                              },
-                            ]}
-                          />
-                        </Form.Item>
-                      </Col>
-
-                      <Col span={6}>
-                        <Form.Item
-                          label="Área (ha)"
-                          name={[field.name, "area"]}
-                          rules={[{ required: true }]}
-                        >
-                          <InputNumber style={{ width: "100%" }} min={1} />
-                        </Form.Item>
-                      </Col>
-
-                      <Col span={6}>
-                        <Form.Item
-                          label="Data execução"
-                          name={[field.name, "data"]}
-                          rules={[{ required: true }]}
-                        >
-                          <DatePicker style={{ width: "100%" }} />
-                        </Form.Item>
-                      </Col>
-
-                      <Col
-                        span={4}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {completo && index === fields.length - 1 && (
-                          <Button
-                            type="text"
-                            icon={
-                              <PlusCircleOutlined style={{ fontSize: 26 }} />
-                            }
-                            onClick={() => add()}
-                          />
-                        )}
-                      </Col>
-                    </Row>
-
-                    <Text strong>
-                      Valor estimado: R$ {valor.toLocaleString("pt-BR")}
-                    </Text>
-                  </div>
-                );
-              })}
-            </>
-          )}
-        </Form.List>
-
-        <div
-          style={{
-            textAlign: "right",
-            fontSize: 18,
-            fontWeight: 600,
-          }}
-        >
-          Total estimado: R$ {totalGeral.toLocaleString("pt-BR")}
-        </div>
+        <FormularioSolicitacaoOrcamento />
       </Form>
     </Modal>
   );

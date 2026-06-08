@@ -8,6 +8,14 @@ import {
   atualizarPropriedade,
 } from "../../../../services/cliente.service";
 import { resolveImagemUrl } from "../../../../utils/imagem";
+import {
+  LIMITES,
+  propsInputArea,
+  regraAreaPositiva,
+  regrasTexto,
+  regrasTextoOpcional,
+  validarImagem,
+} from "../../../../utils/validacao";
 
 /**
  * @param {"create" | "view"} mode
@@ -62,6 +70,12 @@ export default function ModalCadastroArea({
   }, [previewUrl]);
 
   function handleFileSelect(file) {
+    try {
+      validarImagem(file);
+    } catch (error) {
+      message.error(error.message);
+      return;
+    }
     if (previewUrl?.startsWith("blob:")) {
       URL.revokeObjectURL(previewUrl);
     }
@@ -156,25 +170,25 @@ export default function ModalCadastroArea({
         <Form.Item
           label="Nome da Propriedade"
           name="nome"
-          rules={[{ required: true, message: "Informe o nome" }]}
+          rules={regrasTexto("Nome da propriedade", LIMITES.NOME)}
         >
-          <Input placeholder="Ex: Fazenda Primavera" />
+          <Input placeholder="Ex: Fazenda Primavera" maxLength={LIMITES.NOME} />
         </Form.Item>
 
         <Form.Item
           label="Cidade"
           name="cidade"
-          rules={[{ required: true, message: "Informe a cidade" }]}
+          rules={regrasTexto("Cidade", LIMITES.CIDADE)}
         >
-          <Input />
+          <Input maxLength={LIMITES.CIDADE} />
         </Form.Item>
 
         <Form.Item
           label="Área (hectares)"
           name="area"
-          rules={[{ required: true, message: "Informe a área" }]}
+          rules={[regraAreaPositiva("Área")]}
         >
-          <InputNumber style={{ width: "100%" }} min={0.01} placeholder="Ex: 1200" />
+          <InputNumber style={{ width: "100%" }} {...propsInputArea} placeholder="Ex: 1200" />
         </Form.Item>
 
         <Form.Item label="Tipo de Cultura" name="cultura">
@@ -190,8 +204,8 @@ export default function ModalCadastroArea({
           />
         </Form.Item>
 
-        <Form.Item label="Observações" name="observacoes">
-          <Input.TextArea rows={3} />
+        <Form.Item label="Observações" name="observacoes" rules={regrasTextoOpcional()}>
+          <Input.TextArea rows={3} maxLength={LIMITES.OBSERVACAO} showCount />
         </Form.Item>
       </Form>
     </ModalPadrao>

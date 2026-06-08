@@ -36,6 +36,7 @@ export default function CalendarioOrcamentos({
   const [orcamentosApi, setOrcamentosApi] = useState([]);
   const [loading, setLoading] = useState(false);
   const [arrastando, setArrastando] = useState(null);
+  const [posicaoArraste, setPosicaoArraste] = useState({ x: 0, y: 0 });
   const [diaSobre, setDiaSobre] = useState(null);
   const arrastandoRef = useRef(null);
   const calendarioRef = useRef(null);
@@ -120,6 +121,51 @@ export default function CalendarioOrcamentos({
     return <Tag color={cfg.color}>{cfg.label}</Tag>;
   }
 
+  function renderResumoOrcamento(
+    orc,
+    { incluirClima = true, mostrarHandle = false, onIniciarArraste } = {},
+  ) {
+    return (
+      <>
+        {mostrarHandle && (
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Arrastar para reagendar"
+            onPointerDown={(e) => onIniciarArraste?.(e, orc)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginBottom: 8,
+              padding: "6px 8px",
+              borderRadius: 6,
+              background: "#f1f5f9",
+              color: "#475569",
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: "grab",
+              userSelect: "none",
+              touchAction: "none",
+            }}
+          >
+            <HolderOutlined style={{ fontSize: 14 }} />
+            Arrastar
+          </div>
+        )}
+        <div style={{ userSelect: "none" }}>
+          <strong>{orc.cliente}</strong>
+        </div>
+        <div style={{ userSelect: "none" }}>Orçamento #{orc.numero}</div>
+        {orc.status && statusTag(orc.status)}
+        <Tag color={corServico(orc.servico)}>{orc.servico}</Tag>
+        {incluirClima && (
+          <PrevisaoClima cidade={orc.cidade} data={orc.data} compact />
+        )}
+      </>
+    );
+  }
+
   function formatarDataReagendamento(dia) {
     return mesAtual.date(dia).hour(12).minute(0).second(0).format("YYYY-MM-DDTHH:mm:ss");
   }
@@ -166,6 +212,7 @@ export default function CalendarioOrcamentos({
 
     arrastandoRef.current = orc;
     setArrastando(orc);
+    setPosicaoArraste({ x: e.clientX, y: e.clientY });
     setDiaSobre(diaSobCursor(e.clientX, e.clientY));
 
     document.body.style.userSelect = "none";
@@ -176,6 +223,7 @@ export default function CalendarioOrcamentos({
     if (!arrastando) return undefined;
 
     function onMove(e) {
+      setPosicaoArraste({ x: e.clientX, y: e.clientY });
       setDiaSobre(diaSobCursor(e.clientX, e.clientY));
     }
 
@@ -215,37 +263,44 @@ export default function CalendarioOrcamentos({
         {dragEnabled && (
           <p style={{ color: "#64748b", marginBottom: 12 }}>
             Segure na barra <HolderOutlined style={{ margin: "0 4px" }} />{" "}
-            <strong>Arrastar</strong> e solte em outro dia. Funciona com Agendado e
-            Aguard. Cliente.
+            <strong>Arrastar</strong> e solte em outro dia. Uma silhueta do card
+            acompanha o cursor enquanto você move. Funciona com Agendado e Aguard.
+            Cliente.
           </p>
         )}
 
         <div
+          className="calendar-scroll-wrap"
           style={{
             display: "flex",
             justifyContent: "space-between",
             marginBottom: 20,
             alignItems: "center",
+            flexWrap: "wrap",
+            gap: 12,
           }}
         >
           <Button icon={<LeftOutlined />} onClick={() => mudarMes(-1)} />
-          <h2 style={{ margin: 0, textTransform: "capitalize" }}>
+          <h2 style={{ margin: 0, textTransform: "capitalize", fontSize: "clamp(1rem, 3vw, 1.5rem)" }}>
             {mesAtual.format("MMMM YYYY")}
           </h2>
           <Button icon={<RightOutlined />} onClick={() => mudarMes(1)} />
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            marginBottom: 10,
-            fontWeight: "bold",
-          }}
-        >
-          {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map((d) => (
-            <div key={d}>{d}</div>
-          ))}
+        <div className="calendar-scroll-wrap">
+          <div
+            className="calendar-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(7, 1fr)",
+              marginBottom: 10,
+              fontWeight: "bold",
+            }}
+          >
+            {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map((d) => (
+              <div key={d}>{d}</div>
+            ))}
+          </div>
         </div>
 
         {!loading && totalNoMes === 0 && (
@@ -255,36 +310,38 @@ export default function CalendarioOrcamentos({
           />
         )}
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            gap: 10,
-          }}
-        >
-          {dias.map((dia, index) => (
-            <div
-              key={index}
-              data-calendario-dia={dia ?? undefined}
-              style={{
-                minHeight: 168,
-                border:
-                  dragEnabled && dia && diaSobre === dia
-                    ? "2px solid #1677ff"
-                    : dragEnabled && dia
-                      ? "2px dashed #cbd5e1"
-                      : "1px solid #eee",
-                borderRadius: 10,
-                padding: 8,
-                background:
-                  dragEnabled && dia && diaSobre === dia
-                    ? "#e6f4ff"
-                    : dragEnabled && dia
-                      ? "#f8fafc"
-                      : "#fafafa",
-                transition: "background 0.15s, border 0.15s",
-              }}
-            >
+        <div className="calendar-scroll-wrap">
+          <div
+            className="calendar-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(7, 1fr)",
+              gap: 10,
+            }}
+          >
+            {dias.map((dia, index) => (
+              <div
+                key={index}
+                data-calendario-dia={dia ?? undefined}
+                className="calendar-day-cell"
+                style={{
+                  border:
+                    dragEnabled && dia && diaSobre === dia
+                      ? "2px solid #1677ff"
+                      : dragEnabled && dia
+                        ? "2px dashed #cbd5e1"
+                        : "1px solid #eee",
+                  borderRadius: 10,
+                  padding: 8,
+                  background:
+                    dragEnabled && dia && diaSobre === dia
+                      ? "#e6f4ff"
+                      : dragEnabled && dia
+                        ? "#f8fafc"
+                        : "#fafafa",
+                  transition: "background 0.15s, border 0.15s",
+                }}
+              >
               {dia && (
                 <>
                   <div style={{ fontWeight: "bold", marginBottom: 5 }}>{dia}</div>
@@ -298,60 +355,31 @@ export default function CalendarioOrcamentos({
                           hoverable={!arrastando}
                           style={{
                             cursor: "pointer",
-                            opacity: sendoArrastado ? 0.45 : 1,
-                            border:
-                              orc.status === "AguardandoCliente"
+                            opacity: sendoArrastado ? 0.28 : 1,
+                            border: sendoArrastado
+                              ? "2px dashed #94a3b8"
+                              : orc.status === "AguardandoCliente"
                                 ? "1px solid #fbbf24"
                                 : undefined,
-                            background:
-                              orc.status === "AguardandoCliente" ? "#fffbeb" : undefined,
+                            background: sendoArrastado
+                              ? "#f1f5f9"
+                              : orc.status === "AguardandoCliente"
+                                ? "#fffbeb"
+                                : undefined,
                             boxShadow: sendoArrastado
-                              ? "0 8px 24px rgba(22,119,255,0.25)"
+                              ? "inset 0 0 0 1px rgba(148,163,184,0.35)"
                               : undefined,
+                            transition: sendoArrastado ? "none" : "opacity 0.15s",
                           }}
                           onClick={() => {
                             if (!arrastando) setOrcamentoSelecionado(orc);
                           }}
                         >
-                          {dragEnabled && orc.podeReagendar && (
-                            <div
-                              role="button"
-                              tabIndex={0}
-                              aria-label="Arrastar para reagendar"
-                              onPointerDown={(e) => iniciarArraste(e, orc)}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 6,
-                                marginBottom: 8,
-                                padding: "6px 8px",
-                                borderRadius: 6,
-                                background: "#f1f5f9",
-                                color: "#475569",
-                                fontSize: 12,
-                                fontWeight: 600,
-                                cursor: "grab",
-                                userSelect: "none",
-                                touchAction: "none",
-                              }}
-                            >
-                              <HolderOutlined style={{ fontSize: 14 }} />
-                              Arrastar
-                            </div>
-                          )}
-                          <div style={{ userSelect: "none" }}>
-                            <strong>{orc.cliente}</strong>
-                          </div>
-                          <div style={{ userSelect: "none" }}>
-                            Orçamento #{orc.numero}
-                          </div>
-                          {orc.status && statusTag(orc.status)}
-                          <Tag color={corServico(orc.servico)}>{orc.servico}</Tag>
-                          <PrevisaoClima
-                            cidade={orc.cidade}
-                            data={orc.data}
-                            compact
-                          />
+                          {renderResumoOrcamento(orc, {
+                            mostrarHandle:
+                              dragEnabled && orc.podeReagendar && !sendoArrastado,
+                            onIniciarArraste: iniciarArraste,
+                          })}
                         </Card>
                       </div>
                     );
@@ -360,7 +388,46 @@ export default function CalendarioOrcamentos({
               )}
             </div>
           ))}
+          </div>
         </div>
+
+        {arrastando && (
+          <div
+            aria-hidden
+            style={{
+              position: "fixed",
+              left: posicaoArraste.x + 14,
+              top: posicaoArraste.y + 14,
+              width: 228,
+              pointerEvents: "none",
+              zIndex: 10000,
+              transform: "rotate(-1.5deg) scale(1.03)",
+              transformOrigin: "top left",
+            }}
+          >
+            <Card
+              size="small"
+              style={{
+                background: "rgba(255, 255, 255, 0.96)",
+                border: "2px solid #1677ff",
+                boxShadow:
+                  "0 16px 40px rgba(22, 119, 255, 0.28), 0 6px 16px rgba(15, 23, 42, 0.18)",
+                cursor: "grabbing",
+              }}
+              styles={{
+                body: {
+                  padding: 12,
+                  opacity: 0.94,
+                },
+              }}
+            >
+              {renderResumoOrcamento(arrastando, {
+                incluirClima: false,
+                mostrarHandle: true,
+              })}
+            </Card>
+          </div>
+        )}
 
         <Modal
           open={!!orcamentoSelecionado}

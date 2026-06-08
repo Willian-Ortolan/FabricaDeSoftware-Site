@@ -22,9 +22,292 @@ body {
   min-height: 100vh;
   background: #f3f6fb;
   color: #0f172a;
+  overflow-x: hidden;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.app-main-content {
+  background: #f5f7fa;
+  overflow: auto;
+  min-width: 0;
+}
+
+.page-shell {
+  padding: clamp(16px, 4vw, 40px);
+}
+
+.page-section {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 40px);
+}
+
+.page-section--compact {
+  padding-top: clamp(24px, 3vw, 32px);
+  padding-bottom: clamp(24px, 3vw, 40px);
+}
+
+.mobile-nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.mobile-nav-menu-btn {
+  font-size: 18px;
+}
+
+.mobile-nav-title {
+  font-weight: 600;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-sidebar.ant-layout-sider {
+  background: linear-gradient(180deg, #0b1f4a 0%, #0f2760 45%, #102a6b 100%) !important;
+  box-shadow: 4px 0 18px rgba(0, 0, 0, 0.35);
+}
+
+.site-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.site-sidebar-inner--plain {
+  min-height: 100vh;
+}
+
+.site-sidebar-brand {
+  padding: 24px 24px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+}
+
+.site-sidebar-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.site-sidebar-logo--fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.site-sidebar-brand-name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.site-sidebar-brand-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 2px;
+}
+
+.site-sidebar-menu.ant-menu {
+  background: transparent !important;
+  border-right: none !important;
+  padding: 12px 12px 24px;
+}
+
+.site-sidebar-footer {
+  margin-top: auto;
+  padding: 0 24px 24px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+.site-sidebar .ant-menu-dark.ant-menu-inline .ant-menu-item {
+  border-radius: 10px;
+  margin: 4px 0;
+  height: 44px;
+  line-height: 44px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.site-sidebar .ant-menu-dark .ant-menu-item-selected,
+.site-sidebar-drawer .ant-menu-dark .ant-menu-item-selected {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  border-left: 3px solid var(--sidebar-accent, #60a5fa);
+}
+
+.site-sidebar .ant-menu-dark .ant-menu-item:hover:not(.ant-menu-item-selected),
+.site-sidebar-drawer .ant-menu-dark .ant-menu-item:hover:not(.ant-menu-item-selected) {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.site-sidebar .ant-menu-dark .ant-menu-item .ant-menu-item-icon,
+.site-sidebar .ant-menu-dark .ant-menu-item-selected .ant-menu-item-icon,
+.site-sidebar-drawer .ant-menu-dark .ant-menu-item .ant-menu-item-icon {
+  color: inherit !important;
+}
+
+.site-sidebar-drawer .ant-drawer-body {
+  padding: 0 !important;
+  background: linear-gradient(180deg, #0b1f4a 0%, #0f2760 45%, #102a6b 100%);
+}
+
+.hero-section {
+  min-height: clamp(360px, 60vh, 520px);
+  background-size: cover;
+  background-position: center center;
+  display: flex;
+  align-items: center;
+  padding: clamp(32px, 8vw, 72px) clamp(16px, 5vw, 72px);
+  color: white;
+}
+
+.hero-section h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  line-height: 1.15;
+  margin: 0;
+  font-weight: 700;
+}
+
+.hero-actions {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bloco-servico-layout {
+  display: flex;
+  gap: clamp(16px, 4vw, 40px);
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.bloco-servico-texto {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.bloco-servico-imagem {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.bloco-servico-imagem img {
+  width: 100%;
+  height: clamp(220px, 40vw, 350px);
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.como-funciona-arrows {
+  position: absolute;
+  left: 80px;
+  right: 80px;
+  top: 180px;
+  height: 2px;
+  background-color: #d4e1ff;
+  opacity: 0.9;
+}
+
+.home-cta-bar {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 32px) clamp(16px, 4vw, 40px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  color: white;
+  flex-wrap: wrap;
+}
+
+.cliente-page {
+  padding: clamp(16px, 3vw, 24px);
+}
+
+.cliente-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cliente-welcome-title {
+  margin-top: 24px !important;
+  font-size: clamp(1.25rem, 4vw, 1.75rem) !important;
+}
+
+.calendar-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.calendar-grid {
+  min-width: 720px;
+}
+
+.calendar-day-cell {
+  min-height: 168px;
+}
+
+.grid-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.grid-table-wrap .ant-table-wrapper {
+  min-width: 720px;
+}
+
+.super-admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.super-admin-header-title {
+  color: white;
+  font-weight: 700;
+  font-size: clamp(1rem, 3vw, 1.125rem);
+}
+
+@media (max-width: 991px) {
+  .como-funciona-arrows {
+    display: none;
+  }
+
+  .calendar-day-cell {
+    min-height: 120px;
+  }
+}
+
+@media (max-width: 767px) {
+  .calendar-grid {
+    min-width: 640px;
+  }
+
+  .calendar-day-cell {
+    min-height: 100px;
+    padding: 6px !important;
+  }
 }

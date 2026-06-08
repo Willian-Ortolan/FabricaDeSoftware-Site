@@ -13,11 +13,16 @@ import { FaRegClipboard, FaChartLine } from "react-icons/fa6";
 import { FiArrowRight } from "react-icons/fi";
 import { MdOutlineWaterDrop } from "react-icons/md";
 import { RiTreasureMapLine } from "react-icons/ri";
+import { useEmpresaOptional } from "../contexts/EmpresaContext";
 
 const { Title, Paragraph } = Typography;
 
 export default function Home() {
   const navigate = useNavigate();
+  const empresa = useEmpresaOptional();
+  const contratarPath = empresa?.path ? empresa.path("contratar") : "/contratar";
+  const corPrimaria = empresa?.corPrimaria ?? "#1d4ed8";
+
   return (
     <>
       <HeroSection />
@@ -27,14 +32,8 @@ export default function Home() {
           backgroundColor: "#f3f6fb",
         }}
       >
-        <section
-          style={{
-            maxWidth: 1180,
-            margin: "0 auto",
-            padding: "32px 40px 40px",
-          }}
-        >
-          <Row gutter={24}>
+        <section className="page-section page-section--compact">
+          <Row gutter={[24, 24]}>
             <CardServico
               Icone={<LuMapPinned />}
               Titulo="Mapeamento Aéreo"
@@ -62,14 +61,7 @@ export default function Home() {
             borderBottom: "1px solid #e2e8f0",
           }}
         >
-          <div
-            style={{
-              maxWidth: 1180,
-              margin: "0 auto",
-              padding: "48px 40px 40px",
-              position: "relative",
-            }}
-          >
+          <div className="page-section" style={{ position: "relative" }}>
             <Title
               level={3}
               style={{ textAlign: "center", marginBottom: 40, marginTop: 0 }}
@@ -77,18 +69,7 @@ export default function Home() {
               Como Funciona
             </Title>
 
-            {/* Linha central com setas simulando o fluxo */}
-            <div
-              style={{
-                position: "absolute",
-                left: 80,
-                right: 80,
-                top: 180,
-                height: 2,
-                backgroundColor: "#d4e1ff",
-                opacity: 0.9,
-              }}
-            >
+            <div className="como-funciona-arrows">
               {/* As setas são posicionadas exatamente no meio entre os 4 cards */}
               <FiArrowRight
                 style={{
@@ -123,7 +104,7 @@ export default function Home() {
             </div>
 
             <Row
-              gutter={24}
+              gutter={[24, 32]}
               justify="center"
               style={{ position: "relative", zIndex: 1 }}
             >
@@ -159,13 +140,7 @@ export default function Home() {
             backgroundColor: "#f3f6fb",
           }}
         >
-          <div
-            style={{
-              maxWidth: 1180,
-              margin: "0 auto",
-              padding: "40px 40px 24px",
-            }}
-          >
+          <div className="page-section">
             <Title
               level={3}
               style={{ textAlign: "center", marginBottom: 32, marginTop: 0 }}
@@ -173,7 +148,7 @@ export default function Home() {
               Nossos Diferenciais
             </Title>
 
-            <Row gutter={24}>
+            <Row gutter={[24, 24]}>
               <CardPadrao
                 Icone={<MdOutlineWaterDrop atering />}
                 IconeTamanho={64}
@@ -209,22 +184,10 @@ export default function Home() {
 
         <section
           style={{
-            backgroundImage:
-              "linear-gradient(90deg, #1d4ed8 0%, #1e40af 60%, #1d4ed8 100%)",
+            backgroundImage: `linear-gradient(90deg, ${corPrimaria} 0%, ${corPrimaria}cc 60%, ${corPrimaria} 100%)`,
           }}
         >
-          <div
-            style={{
-              maxWidth: 1180,
-              margin: "0 auto",
-              padding: "32px 40px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 24,
-              color: "white",
-            }}
-          >
+          <div className="home-cta-bar">
             <div>
               <Title
                 level={3}
@@ -242,7 +205,8 @@ export default function Home() {
                   color: "rgba(255,255,255,0.9)",
                 }}
               >
-                Fale com um consultor AgroDrones e descubra o melhor plano para
+                Fale com um consultor
+                {empresa?.nome ? ` ${empresa.nome}` : " AgroDrones"} e descubra o melhor plano para
                 sua fazenda.
               </Paragraph>
             </div>
@@ -250,7 +214,7 @@ export default function Home() {
             <Button
               type="primary"
               size="large"
-              onClick={() => navigate("/contratar")}
+              onClick={() => navigate(contratarPath)}
               style={{
                 borderRadius: 999,
                 paddingInline: 30,

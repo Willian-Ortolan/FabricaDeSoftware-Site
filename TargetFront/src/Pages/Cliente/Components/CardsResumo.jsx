@@ -1,15 +1,11 @@
 import { Row, Col, Card, Statistic } from "antd";
 import { EnvironmentOutlined, RocketOutlined } from "@ant-design/icons";
 
-export default function CardsResumo({ resumo, onClickSolicitacoes }) {
+export default function CardsResumo({ resumo }) {
   return (
-    <Row gutter={16}>
-      <Col span={6}>
-        <Card
-          hoverable
-          onClick={onClickSolicitacoes}
-          style={{ cursor: "pointer" }}
-        >
+    <Row gutter={[16, 16]}>
+      <Col xs={24} sm={12} md={8}>
+        <Card>
           <Statistic
             title="Solicitações Pendentes"
             value={resumo?.solicitacoesPendentes ?? 0}
@@ -17,7 +13,7 @@ export default function CardsResumo({ resumo, onClickSolicitacoes }) {
         </Card>
       </Col>
 
-      <Col span={6}>
+      <Col xs={24} sm={12} md={8}>
         <Card>
           <Statistic
             title="Minhas Areas"
@@ -27,7 +23,7 @@ export default function CardsResumo({ resumo, onClickSolicitacoes }) {
         </Card>
       </Col>
 
-      <Col span={6}>
+      <Col xs={24} sm={12} md={8}>
         <Card>
           <Statistic
             title="Historico"

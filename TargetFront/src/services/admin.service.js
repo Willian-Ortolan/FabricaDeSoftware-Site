@@ -1,10 +1,5 @@
 import api from "./api";
 
-export async function getDashboard() {
-  const { data } = await api.get("/admin/dashboard");
-  return data;
-}
-
 export async function getOrcamentos(status) {
   const { data } = await api.get("/admin/orcamentos", {
     params: status ? { status } : undefined,
@@ -32,11 +27,6 @@ export async function rejeitarOrcamento(id) {
   return data;
 }
 
-export async function getGraficos() {
-  const { data } = await api.get("/admin/dashboard/graficos");
-  return data;
-}
-
 export async function ajustarOrcamento(id, payload) {
   const { data } = await api.put(`/admin/orcamentos/${id}/ajustar`, payload);
   return data;
@@ -46,6 +36,11 @@ export async function reagendarOrcamento(id, dataAgendada) {
   const { data } = await api.patch(`/admin/orcamentos/${id}/reagendar`, {
     dataAgendada,
   });
+  return data;
+}
+
+export async function marcarOrcamentoAtendido(id) {
+  const { data } = await api.patch(`/admin/orcamentos/${id}/atendido`);
   return data;
 }
 

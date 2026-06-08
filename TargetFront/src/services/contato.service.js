@@ -1,6 +1,7 @@
 import api from "./api";
 
-export async function enviarContato(payload) {
+/** @deprecated Prefer solicitarOrcamentoPublico com slug em rotas /e/:slug */
+export async function solicitarOrcamento(payload) {
   const { data } = await api.post("/contato", payload);
   return data;
 }

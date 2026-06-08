@@ -2,6 +2,7 @@ import { Form, Input, message } from "antd";
 import { useEffect, useState } from "react";
 import ModalPadrao from "../../../../Components/ModalPadrao/ModalPadrao";
 import { alterarSenhaUsuario } from "../../../../services/admin.service";
+import { regrasSenha } from "../../../../utils/validacao";
 
 export default function ModalAlterarSenha({ open, onClose, usuario, onSaved }) {
   const [form] = Form.useForm();
@@ -40,14 +41,7 @@ export default function ModalAlterarSenha({ open, onClose, usuario, onSaved }) {
       loading={loading}
     >
       <Form form={form} layout="vertical">
-        <Form.Item
-          label="Nova senha"
-          name="novaSenha"
-          rules={[
-            { required: true, message: "Informe a nova senha" },
-            { min: 6, message: "Mínimo de 6 caracteres" },
-          ]}
-        >
+        <Form.Item label="Nova senha" name="novaSenha" rules={regrasSenha()}>
           <Input.Password placeholder="Nova senha de acesso" />
         </Form.Item>
 

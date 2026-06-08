@@ -1,4 +1,4 @@
-import { Row, Col, Typography, Flex, Button, Spin } from "antd";
+import { Row, Col, Typography, Button, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { removeToken } from "../../utils/auth";
@@ -13,7 +13,6 @@ import GridSolicitacoes from "./Components/Grid/GridSolicitacoes";
 const { Title, Paragraph } = Typography;
 
 export default function Cliente() {
-  const [mostrarSolicitacoes, setMostrarSolicitacoes] = useState(false);
   const [resumo, setResumo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -45,17 +44,17 @@ export default function Cliente() {
 
   return (
     <Spin spinning={loading}>
-      <div style={{ padding: 24 }}>
-        <Flex justify="space-between" align="center">
+      <div className="cliente-page">
+        <div className="cliente-page-header">
           <Title level={2} style={{ margin: 0 }}>
             Área do Cliente
           </Title>
           <Button danger onClick={logout}>
             Logout
           </Button>
-        </Flex>
+        </div>
 
-        <Title level={3} style={{ marginTop: 24 }}>
+        <Title level={3} className="cliente-welcome-title">
           Bem-vindo à sua Área de Cliente
           {resumo?.nomeCliente ? `, ${resumo.nomeCliente}` : ""}!
         </Title>
@@ -65,18 +64,13 @@ export default function Cliente() {
           relatórios.
         </Paragraph>
 
-        <CardsResumo
-          resumo={resumo}
-          onClickSolicitacoes={() => setMostrarSolicitacoes(true)}
-        />
+        <CardsResumo resumo={resumo} />
 
-        {mostrarSolicitacoes && (
-          <Row gutter={24} style={{ marginTop: 30 }}>
-            <Col span={24}>
-              <GridSolicitacoes onUpdated={atualizarDados} />
-            </Col>
-          </Row>
-        )}
+        <Row gutter={24} style={{ marginTop: 30 }}>
+          <Col span={24}>
+            <GridSolicitacoes onUpdated={atualizarDados} />
+          </Col>
+        </Row>
 
         <Row gutter={24} style={{ marginTop: 30 }}>
           <Col span={24}>
@@ -90,11 +84,11 @@ export default function Cliente() {
           </Col>
         </Row>
 
-        <Row gutter={24} style={{ marginTop: 30 }}>
-          <Col span={16}>
+        <Row gutter={[24, 24]} style={{ marginTop: 30 }}>
+          <Col xs={24} lg={16}>
             <HistoricoOrcamentos />
           </Col>
-          <Col span={8}>
+          <Col xs={24} lg={8}>
             <ProximasOperacoes />
           </Col>
         </Row>

@@ -16,7 +16,7 @@ import ModalCadastroUsuario from "./ModalCadastroUsuario";
 import ModalAlterarSenha from "./ModalAlterarSenha";
 
 const perfilTag = (perfil) => {
-  if (perfil === "AdminSystem") {
+  if (perfil === "AdminEmpresa" || perfil === "AdminSystem") {
     return <Tag color="blue">Administrador</Tag>;
   }
   return <Tag color="green">Cliente</Tag>;
@@ -83,10 +83,7 @@ export default function GridUsuarios() {
       dataIndex: "perfil",
       key: "perfil",
       render: (perfil) => perfilTag(perfil),
-      filters: [
-        { text: "Cliente", value: "Cliente" },
-        { text: "Administrador", value: "AdminSystem" },
-      ],
+      filters: [{ text: "Cliente", value: "Cliente" }],
       onFilter: (value, record) => record.perfil === value,
     },
     {
@@ -166,7 +163,7 @@ export default function GridUsuarios() {
           icon={<PlusOutlined />}
           onClick={() => setModalCadastro(true)}
         >
-          Novo usuário
+          Novo cliente
         </Button>
       </div>
 

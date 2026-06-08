@@ -1,4 +1,5 @@
 import api from "./api";
+import { mapSolicitacoesFromApi } from "../utils/solicitacao";
 
 export async function getResumo() {
   const { data } = await api.get("/cliente/resumo");
@@ -42,7 +43,7 @@ export async function atualizarPropriedade(id, formData) {
 
 export async function getSolicitacoes() {
   const { data } = await api.get("/cliente/solicitacoes");
-  return data;
+  return mapSolicitacoesFromApi(data);
 }
 
 export async function criarSolicitacao(payload) {
@@ -70,10 +71,16 @@ export async function getHistoricoOrcamentos() {
   return data;
 }
 
-export async function getHistoricoOperacoes(tipo) {
-  const { data } = await api.get("/cliente/historico-operacoes", {
-    params: { tipo },
-  });
+export async function getHistoricoOperacoes(
+  tipo,
+  { periodo = "mensal", dataInicio, dataFim, propriedadeId, status } = {},
+) {
+  const params = { periodo };
+  if (dataInicio) params.dataInicio = dataInicio;
+  if (dataFim) params.dataFim = dataFim;
+  if (propriedadeId) params.propriedadeId = propriedadeId;
+  if (status?.length) params.status = status;
+  const { data } = await api.get(`/cliente/historico-operacoes/${tipo}`, { params });
   return data;
 }
 

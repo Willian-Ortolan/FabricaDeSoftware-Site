@@ -8,14 +8,18 @@ import {
 } from "@ant-design/icons";
 
 import PageShell from "../Components/PageShell";
+import { useEmpresaOptional } from "../contexts/EmpresaContext";
 
 const { Title, Paragraph } = Typography;
 
 export default function SobreNos() {
+  const empresa = useEmpresaOptional();
+  const nome = empresa?.nome ?? "Target Pulverização";
+
   return (
     <PageShell
       title="Sobre Nós"
-      subtitle="Conheça mais sobre a Target Pulverização."
+      subtitle={`Conheça mais sobre a ${nome}.`}
     >
       <div
         style={{

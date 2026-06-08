@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import PageShell from "../Components/PageShell";
+import { useEmpresaOptional } from "../contexts/EmpresaContext";
 import BlocoServico from "../Components/Servicos/BlocoServico";
 import ServicosCards from "../Components/Servicos/ServicosCards";
 import DronePuverizando from "../assets/imgServicos/DronePuverizando.png";
@@ -76,6 +77,8 @@ const servicosData = [
 
 export default function Servicos() {
   const navigate = useNavigate();
+  const empresa = useEmpresaOptional();
+  const contratarPath = empresa?.path ? empresa.path("contratar") : "/contratar";
 
   return (
     <PageShell
@@ -85,7 +88,7 @@ export default function Servicos() {
       
           <Button
             type="primary"
-            onClick={() => navigate("/contratar")}
+            onClick={() => navigate(contratarPath)}
             style={{
               borderRadius: 999,
               background: "linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)",

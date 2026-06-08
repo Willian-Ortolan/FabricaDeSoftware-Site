@@ -15,6 +15,12 @@ import {
   ajustarOrcamento,
   reagendarOrcamento,
 } from "../../../../services/admin.service";
+import {
+  desabilitarDatasPassadas,
+  propsInputMoeda,
+  validarDataManual,
+  validarMoedaManual,
+} from "../../../../utils/validacao";
 
 const columns = (handlers) => [
   {
@@ -165,9 +171,15 @@ export default function GridAprovacao({ Status, onUpdated }) {
   };
 
   async function confirmarAjuste() {
-    if (!ajusteModal || novoValor == null) return;
+    if (!ajusteModal) return;
+    try {
+      validarMoedaManual(novoValor, "Valor estimado");
+    } catch (error) {
+      message.error(error.message);
+      return;
+    }
     await executarAcao(
-      () => ajustarOrcamento(ajusteModal.IdOrcamento, novoValor),
+      () => ajustarOrcamento(ajusteModal.IdOrcamento, { VlrEstimado: novoValor }),
       "Valor ajustado com sucesso.",
     );
     setAjusteModal(null);
@@ -175,6 +187,12 @@ export default function GridAprovacao({ Status, onUpdated }) {
 
   async function confirmarReagendamento() {
     if (!reagendarModal || !novaData) return;
+    try {
+      validarDataManual(novaData, "Data da operação");
+    } catch (error) {
+      message.error(error.message);
+      return;
+    }
     await executarAcao(
       () =>
         reagendarOrcamento(
@@ -207,13 +225,9 @@ export default function GridAprovacao({ Status, onUpdated }) {
       >
         <InputNumber
           style={{ width: "100%" }}
-          min={0}
           value={novoValor}
           onChange={setNovoValor}
-          formatter={(value) =>
-            `R$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-          }
-          parser={(value) => value.replace(/R\$\s?|(\.*)/g, "").replace(",", ".")}
+          {...propsInputMoeda}
         />
       </Modal>
 
@@ -230,6 +244,7 @@ export default function GridAprovacao({ Status, onUpdated }) {
           value={novaData}
           onChange={setNovaData}
           format="DD/MM/YYYY"
+          disabledDate={desabilitarDatasPassadas}
         />
       </Modal>
     </>

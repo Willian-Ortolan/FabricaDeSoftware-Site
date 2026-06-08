@@ -1,14 +1,16 @@
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useEmpresaOptional } from "../../contexts/EmpresaContext";
 
 export function ButtonNossosServicos() {
-
   const navigate = useNavigate();
+  const empresa = useEmpresaOptional();
+  const servicosPath = empresa?.path ? empresa.path("servicos") : "/servicos";
 
   return (
     <Button
       size="large"
-      onClick={() => navigate("/servicos")}
+      onClick={() => navigate(servicosPath)}
       style={{
         borderRadius: 999,
         paddingInline: 26,
