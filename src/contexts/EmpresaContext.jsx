@@ -49,7 +49,10 @@ export function EmpresaProvider({ children }) {
           }
 
           setError(mensagem || "Empresa não encontrada ou indisponível.");
-          setEmpresa(null);
+          setEmpresa({
+            nome: "Target Pulverização",
+            slug,
+          });
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -97,15 +100,19 @@ export function EmpresaProvider({ children }) {
     );
   }
 
-  if (error) {
-    return (
-      <div style={{ padding: 40, maxWidth: 640, margin: "0 auto" }}>
-        <Alert type="error" message="Empresa indisponível" description={error} showIcon />
-      </div>
-    );
-  }
-
   return (
-    <EmpresaContext.Provider value={value}>{children}</EmpresaContext.Provider>
+    <EmpresaContext.Provider value={value}>
+      {error ? (
+        <div style={{ padding: "16px 16px 0", maxWidth: 960, margin: "0 auto" }}>
+          <Alert
+            type="warning"
+            showIcon
+            message="Dados da empresa indisponíveis"
+            description={`${error} O site institucional continua disponível.`}
+          />
+        </div>
+      ) : null}
+      {children}
+    </EmpresaContext.Provider>
   );
 }
