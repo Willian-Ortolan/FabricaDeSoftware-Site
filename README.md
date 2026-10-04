@@ -33,3 +33,8 @@ O conteúdo de `dist/` pode ser publicado na raiz do domínio. O arquivo
 `public/.htaccess` fornece fallback de SPA e redireciona URLs privadas antigas
 para o ERP em hospedagens Apache/Hostinger. `public/web.config` mantém o fallback
 equivalente para IIS.
+
+## Repositórios
+
+- GitHub: https://github.com/Willian-Ortolan/FabricaDeSoftware-Site
+- Azure: crie o repositório `FabricaDeSoftware-Site` no projeto `FabricaDeSoftware` e publique com `git push -u origin feature/Desmembramento-da-Aplicação`.
