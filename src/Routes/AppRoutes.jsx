@@ -7,12 +7,28 @@ import Pulverizacao from "../Pages/Pulverizacao";
 import Contratar from "../Pages/Contratar";
 import NotFound from "../Pages/NotFound";
 import TenantLayout from "../Layouts/TenantLayout";
-import { PUBLIC_ROUTE_PATHS } from "../config";
+import ExternalRedirect from "../Components/ExternalRedirect";
+import { PUBLIC_ROUTE_PATHS, publicConfig } from "../config";
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route
+          path="/e/:slug/login"
+          element={<ExternalRedirect to={publicConfig.erpLoginUrl} />}
+        />
+        <Route
+          path="/e/:slug/admin"
+          element={<ExternalRedirect to={`${publicConfig.erpUrl}/admin`} />}
+        />
+        <Route
+          path="/e/:slug/cliente"
+          element={<ExternalRedirect to={`${publicConfig.erpUrl}/cliente`} />}
+        />
+        <Route path="/e/:slug/*" element={<Navigate to="/" replace />} />
+        <Route path="/e/:slug" element={<Navigate to="/" replace />} />
+
         <Route element={<TenantLayout />}>
           <Route index element={<Home />} />
           <Route path={PUBLIC_ROUTE_PATHS.servicos.slice(1)} element={<Servicos />} />
@@ -30,4 +46,3 @@ export default function AppRoutes() {
     </BrowserRouter>
   );
 }
-
