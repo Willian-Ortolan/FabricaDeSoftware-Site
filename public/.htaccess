@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Encaminha acessos antigos das áreas privadas para o ERP.
+RewriteRule ^e/target/login/?$ https://erp.targetpulverizacao.com.br/login [R=301,L,NE]
+RewriteRule ^e/target/admin/?$ https://erp.targetpulverizacao.com.br/admin [R=301,L,NE]
+RewriteRule ^e/target/cliente/?$ https://erp.targetpulverizacao.com.br/cliente [R=301,L,NE]
+
+# Mantém as rotas do React Router funcionando no Apache/Hostinger.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
